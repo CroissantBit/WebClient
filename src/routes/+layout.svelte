@@ -5,4 +5,8 @@
 	export let data: LayoutData;
 </script>
 
+<svelte:head>
+	<title>Croissant Bit</title>
+</svelte:head>
+
 <slot />
