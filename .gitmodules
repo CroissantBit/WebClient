@@ -1,3 +1,3 @@
-[submodule "protospecs"]
+[submodule "proto"]
 	path = proto
 	url = https://github.com/croissantbit/protospecs
