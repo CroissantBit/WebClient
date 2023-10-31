@@ -8,3 +8,6 @@ node_modules
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Excludes the generated TS types from protobuf files
+src/lib/types/*.ts

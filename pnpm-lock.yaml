@@ -64,6 +64,9 @@ devDependencies:
   tailwindcss:
     specifier: ^3.3.5
     version: 3.3.5
+  ts-proto:
+    specifier: ^1.162.2
+    version: 1.162.2
   tslib:
     specifier: ^2.6.2
     version: 2.6.2
@@ -864,6 +867,11 @@ packages:
     resolution: {integrity: sha512-91oR7hLNUP3gG6MLU+n96em322a8Xzes8wWdBKhLgUoiJsAF5irZnxSUCbc+qUZXNnPCfUwLOi9ZCZpkvjQajw==}
     dev: true
 
+  /case-anything@2.1.13:
+    resolution: {integrity: sha512-zlOQ80VrQ2Ue+ymH5OuM/DlDq64mEm+B9UTdHULv5osUMD6HalNTblf2b1u/m6QecjsnOkBpqVZ+XPwIVsy7Ng==}
+    engines: {node: '>=12.13'}
+    dev: true
+
   /catharsis@0.9.0:
     resolution: {integrity: sha512-prMTQVpcns/tzFgFVkVp6ak6RykZyWb3gu8ckUpd6YkTlacOd3DXGJjIpD4Q6zJirizvaiAjSSHlOsA+6sNh2A==}
     engines: {node: '>= 10'}
@@ -980,6 +988,12 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /detect-libc@1.0.3:
+    resolution: {integrity: sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg==}
+    engines: {node: '>=0.10'}
+    hasBin: true
+    dev: true
+
   /devalue@4.3.2:
     resolution: {integrity: sha512-KqFl6pOgOW+Y6wJgu80rHpo2/3H07vr8ntR9rkkFIRETewbf5GaYYcakYfiKz89K+sLsuPkQIZaXDMjUObZwWg==}
     dev: true
@@ -1004,6 +1018,12 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       esutils: 2.0.3
+    dev: true
+
+  /dprint-node@1.0.8:
+    resolution: {integrity: sha512-iVKnUtYfGrYcW1ZAlfR/F59cUVL8QIhWoBJoSjkkdua/dkWIgjZfiLMeTjiB06X0ZLkQ0M2C1VbUj/CxkIf1zg==}
+    dependencies:
+      detect-libc: 1.0.3
     dev: true
 
   /electron-to-chromium@1.4.569:
@@ -2518,6 +2538,29 @@ packages:
 
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
+    dev: true
+
+  /ts-poet@6.6.0:
+    resolution: {integrity: sha512-4vEH/wkhcjRPFOdBwIh9ItO6jOoumVLRF4aABDX5JSNEubSqwOulihxQPqai+OkuygJm3WYMInxXQX4QwVNMuw==}
+    dependencies:
+      dprint-node: 1.0.8
+    dev: true
+
+  /ts-proto-descriptors@1.15.0:
+    resolution: {integrity: sha512-TYyJ7+H+7Jsqawdv+mfsEpZPTIj9siDHS6EMCzG/z3b/PZiphsX+mWtqFfFVe5/N0Th6V3elK9lQqjnrgTOfrg==}
+    dependencies:
+      long: 5.2.3
+      protobufjs: 7.2.5
+    dev: true
+
+  /ts-proto@1.162.2:
+    resolution: {integrity: sha512-iVvoXmelsniHFxh9GAkmz3S7yNuddjgv5iWTDr0VUn67IH3RSvvAd8BjN7Snm0+p1yY/diAQoNHXHuNHe8D3rA==}
+    hasBin: true
+    dependencies:
+      case-anything: 2.1.13
+      protobufjs: 7.2.5
+      ts-poet: 6.6.0
+      ts-proto-descriptors: 1.15.0
     dev: true
 
   /tslib@2.6.2:
