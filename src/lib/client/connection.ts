@@ -1,6 +1,7 @@
-import { Ping, Pong, RegisterClientRequest } from '$lib/types/main';
-import type { MessageType, UnknownMessage } from '$lib/types/typeRegistry';
-import { messageIdType, messageTypeId } from '$lib/client/messageId';
+import { PUBLIC_KEEPALIVE_INTERVAL, PUBLIC_KEEPALIVE_TIMEOUT_RETRIES } from '$env/static/public';
+import { messageIdType,messageTypeId } from '$lib/client/messageId';
+import { Ping,Pong,RegisterClientRequest } from '$lib/types/main';
+import type { MessageType,UnknownMessage } from '$lib/types/typeRegistry';
 
 enum clientState {
 	DISCONNECTED = 'DISCONNECTED',
@@ -9,12 +10,11 @@ enum clientState {
 }
 
 export class Connection {
-	private state: clientState = clientState.DISCONNECTED;
-
 	public socket: WebSocket;
-
-	private keepAliveInterval = 5000;
-	private keepAliveTimeout = 10000;
+	
+	private state: clientState = clientState.DISCONNECTED;
+	private keepAliveRetriesLeft = Number.parseInt(PUBLIC_KEEPALIVE_TIMEOUT_RETRIES);
+	private keepAliveIntervalId: any;
 
 	constructor(ip: string, port: number) {
 		this.socket = new WebSocket(`ws://${ip}:${port}`, 'binary');
@@ -35,6 +35,8 @@ export class Connection {
 		this.socket.onclose = () => {
 			this.state = clientState.DISCONNECTED;
 			console.log('Connection closed');
+
+			clearInterval(this.keepAliveIntervalId);
 		};
 
 		this.socket.onmessage = (event) => {
@@ -53,10 +55,16 @@ export class Connection {
 	}
 
 	private registerKeepAlive() {
-		setInterval(() => {
-			console.log('Ping sent');
+		this.keepAliveIntervalId = setInterval(() => {
+			if (this.keepAliveRetriesLeft == 0)
+			{
+				this.socket.close();
+				console.log(this.socket);
+				return;
+			}
+			this.keepAliveRetriesLeft -= 1;
 			this.sendPrefixed(Ping.create(), Ping);
-		}, 8000);
+		}, Number.parseInt(PUBLIC_KEEPALIVE_INTERVAL));
 	}
 
 	private handleMessage(event: MessageEvent, socket: WebSocket) {
@@ -67,14 +75,17 @@ export class Connection {
 		console.log('Message id', msgId, data[0]);
 		if (msgId === undefined) throw new Error(`Message id ${data[0]} not registered`);
 		let msgData = data.slice(1);
-		// TODO: Messages are not order correctly
-		// Figure another way? Manual?
-		if (msgId.$type === Ping.$type) {
-			console.log('Ping received, sending Pong');
-			this.sendPrefixed(Pong.create(), Pong);
-			return;
+		
+		switch (msgId.$type) {
+			case Ping.$type:
+				console.log('Ping received, sending Pong');
+				this.sendPrefixed(Pong.create(), Pong);
+			break;
+			case Pong.$type:
+				this.keepAliveRetriesLeft = Number.parseInt(PUBLIC_KEEPALIVE_TIMEOUT_RETRIES);
+				console.log('Pong received');
+			break;
 		}
-		console.log('Got different message');
 	}
 }
 
