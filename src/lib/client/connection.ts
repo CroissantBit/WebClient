@@ -1,6 +1,6 @@
 import { Ping, Pong, RegisterClientRequest } from '$lib/types/main';
 import type { MessageType, UnknownMessage } from '$lib/types/typeRegistry';
-import { messageIdType, messageTypeId } from './messageId';
+import { messageIdType, messageTypeId } from '$lib/client/messageId';
 
 enum clientState {
 	DISCONNECTED = 'DISCONNECTED',
@@ -29,8 +29,7 @@ export class Connection {
 		this.socket.onopen = () => {
 			this.state = clientState.CONNECTED;
 			console.log(`Connected to server ${ip}:${port}`);
-			// Register keep alive
-			//this.registerKeepAlive();
+			this.registerKeepAlive();
 		};
 
 		this.socket.onclose = () => {
@@ -87,5 +86,3 @@ export function registerClient(clientInfo: RegisterClientRequest) {
 	});
 	var buffer = RegisterClientRequest.encode(clientInfo).finish();
 }
-
-export function encodePrefix(buffer: Uint8Array, msgId: number) {}

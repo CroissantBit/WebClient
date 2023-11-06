@@ -6,5 +6,5 @@
 
 html {
 	font-family: 'Inter', 'Inter-fallback';
-	@apply bg-smore-100 p-5 dark:bg-smore-950;
+	@apply bg-smore-950;
 }

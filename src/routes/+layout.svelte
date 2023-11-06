@@ -9,4 +9,6 @@
 	<title>Croissant Bit</title>
 </svelte:head>
 
-<slot />
+<main class="m-5">
+	<slot />
+</main>

@@ -1,14 +1,40 @@
-import { messageTypeRegistry, type MessageType } from '$lib/types/typeRegistry';
+import {
+	AudioFrame,
+	Ping,
+	Pong,
+	RegisterClientRequest,
+	RegisterClientResponse,
+	SignalSequenceFrameUpdate,
+	SignalUpdateRequest,
+	SignalUpdateResponse,
+	VideoFrameUpdate,
+	VideoMetadataListRequest,
+	VideoMetadataRequest,
+	VideoMetadataResponse
+} from '$lib/types/main';
+import type { MessageType } from '$lib/types/typeRegistry';
+
+// Will need to be updated manually on each new proto-spec iteration 
+// This is due to each message must be assigned a ID that matches the order in the .proto file
+export const orderedMessages = [
+	Ping,
+	Pong,
+	RegisterClientRequest,
+	RegisterClientResponse,
+	VideoFrameUpdate,
+	AudioFrame,
+	VideoMetadataListRequest,
+	VideoMetadataRequest,
+	VideoMetadataResponse,
+	SignalSequenceFrameUpdate,
+	SignalUpdateRequest,
+	SignalUpdateResponse
+];
 
 export const messageTypeId = new Map<MessageType, number>(
-	Array.from(messageTypeRegistry.values()).map((value, index) => [value, index + 1])
+	Array.from(orderedMessages).map((value, index) => [value, index + 1])
 );
-
-console.log(messageTypeRegistry);
-console.log(messageTypeId);
 
 export const messageIdType = new Map<number, MessageType>(
-	Array.from(messageTypeId, ([key, value]) => [value, key])
+	Array.from(orderedMessages).map((value, index) => [index + 1, value])
 );
-
-console.log(messageIdType);
