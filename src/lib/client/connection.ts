@@ -1,8 +1,10 @@
 import { PUBLIC_KEEPALIVE_INTERVAL, PUBLIC_KEEPALIVE_TIMEOUT_RETRIES } from '$env/static/public';
 import { messageIdType, messageTypeId } from '$lib/client/messageId';
-import { videos } from '$lib/client/stores/videos';
+import { videos } from '$lib/client/stores/videosList';
 import {
 	AudioFrameUpdate,
+	DeviceInfoListRequest,
+	DeviceInfoResponse,
 	Ping,
 	Pong,
 	RegisterClientRequest,
@@ -14,6 +16,7 @@ import {
 	VideoMetadataResponse
 } from '$lib/types/main';
 import type { MessageType, UnknownMessage } from '$lib/types/typeRegistry';
+import { devices } from './stores/devicesList';
 
 export enum ConnectionState {
 	DISCONNECTED = 'DISCONNECTED',
@@ -49,6 +52,7 @@ export class Connection {
 			this.registerKeepAlive();
 
 			this.sendPrefixed(VideoMetadataListRequest.create(), VideoMetadataListRequest);
+			this.sendPrefixed(DeviceInfoListRequest.create(), DeviceInfoListRequest);
 		};
 
 		this.socket.onclose = async () => {
@@ -135,6 +139,11 @@ export class Connection {
 				break;
 
 			case SignalUpdateRequest.$type:
+				break;
+
+			case DeviceInfoResponse.$type:
+				let deviceInfoContainer = DeviceInfoResponse.decode(msgData);
+				devices.updateDevices(deviceInfoContainer.devices);
 				break;
 		}
 	}

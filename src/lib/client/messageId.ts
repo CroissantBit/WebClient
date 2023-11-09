@@ -1,5 +1,8 @@
 import {
 	AudioFrameUpdate,
+	DeviceInfoListRequest,
+	DeviceInfoRequest,
+	DeviceInfoResponse,
 	Ping,
 	Pong,
 	RegisterClientRequest,
@@ -31,7 +34,10 @@ export const orderedMessages = [
 	VideoMetadataResponse,
 	SignalSequenceFrameUpdate,
 	SignalUpdateRequest,
-	SignalUpdateResponse
+	SignalUpdateResponse,
+	DeviceInfoRequest,
+	DeviceInfoListRequest,
+	DeviceInfoResponse
 ];
 
 export const messageTypeId = new Map<MessageType, number>(

@@ -1,11 +1,9 @@
 <script lang="ts">
+	import VideoItem from '$lib/components/VideoItem.svelte';
 	import UploadDialog from '$lib/components/UploadDialog.svelte';
-
-	import Video from '$lib/components/VideoItem.svelte';
-	import { videos } from '$lib/client/stores/videos';
+	import { videos } from '$lib/client/stores/videosList';
 	import { Airplay, Grid2X2, List, Search } from 'lucide-svelte';
 	import { createToggle, melt } from '@melt-ui/svelte';
-	import { Connection } from '$lib/client/connection';
 
 	let searchTerm = '';
 
@@ -41,7 +39,7 @@
 	</button>
 	<UploadDialog />
 	<a
-		href="/devices"
+		href="/client/devices"
 		class="flex items-center rounded p-2 outline-none hover:bg-lavender-900 hover:text-bellflower-100 focus:bg-lavender-900 focus:text-bellflower-100"
 	>
 		<Airplay class="h-6 w-6" />
@@ -59,6 +57,6 @@
 		</div>
 	{/if}
 	{#each filteredVideos as video (video.id)}
-		<Video {video} />
+		<VideoItem {video} />
 	{/each}
 </div>

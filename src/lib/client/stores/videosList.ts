@@ -1,15 +1,15 @@
 import type { VideoMetadata } from '$lib/types/metadata';
 import { writable } from 'svelte/store';
 
-export const videos = createVideoStore();
+export const videos = createVideosStore();
 
-function createVideoStore() {
+function createVideosStore() {
 	const { subscribe, update } = writable<VideoMetadata[]>([]);
 
 	return {
 		subscribe,
 		/**
-		 * Updates existing and then appends leftover items to the store
+		 * Updates existing and appends leftover items to the store
 		 */
 		updateVideos: async (videoMetadata: VideoMetadata[]) => {
 			update((videos) => {

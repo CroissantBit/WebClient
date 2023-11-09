@@ -6,6 +6,6 @@
 	<title>Croissant Bit</title>
 </svelte:head>
 
-<main class="mx-auto max-w-7xl p-4">
+<main class="mx-auto h-[100vh] max-w-7xl p-4">
 	<slot />
 </main>
