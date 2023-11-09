@@ -17,12 +17,12 @@
 	<input
 		bind:value={url}
 		type="text"
-		class=" w-60 flex-1 rounded bg-smore-900 p-2 text-white"
+		class="flex-1 rounded bg-smore-900 p-2 text-white"
 		placeholder="localhost:443"
 	/>
 	<button
 		on:click={navigate}
-		class="flex w-14 items-center justify-center rounded border border-lapis-500 bg-lapis-500 hover:bg-transparent"
+		class="flex w-14 items-center justify-center rounded border border-lapis-500 bg-lapis-500 outline-none focus-within:bg-transparent hover:bg-transparent"
 	>
 		<ArrowRight class="h-5 w-5 text-white" />
 	</button>
