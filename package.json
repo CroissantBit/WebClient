@@ -14,6 +14,8 @@
 		"gen_linux": "protoc --proto_path=proto/src/ --plugin=protoc-gen-ts_proto=node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=outputTypeAnnotations=static-only --ts_proto_opt=outputTypeRegistry=true --ts_proto_opt=exportCommonSymbols=false --ts_proto_opt=esModuleInterop=true --ts_proto_opt=env=browser --ts_proto_out=./src/lib/types/ ./proto/src/*.proto"
 	},
 	"devDependencies": {
+		"@melt-ui/pp": "^0.1.2",
+		"@melt-ui/svelte": "^0.60.2",
 		"@sveltejs/adapter-auto": "^2.1.1",
 		"@sveltejs/kit": "^1.27.3",
 		"@typescript-eslint/eslint-plugin": "^6.10.0",
@@ -29,6 +31,7 @@
 		"prettier-plugin-tailwindcss": "0.4.1",
 		"svelte": "^4.2.2",
 		"svelte-check": "^3.5.2",
+		"svelte-sequential-preprocessor": "^2.0.1",
 		"tailwindcss": "^3.3.5",
 		"ts-proto": "^1.164.0",
 		"tslib": "^2.6.2",
