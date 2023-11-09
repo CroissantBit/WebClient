@@ -12,6 +12,11 @@
 	});
 </script>
 
-{#each $videos as video (video.id)}
-	<Video {video} />
-{/each}
+<div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2">
+	{#if $videos.length === 0}
+		<div class="text-center text-slate-500">No videos found. Try uploading some!</div>
+	{/if}
+	{#each $videos as video (video.id)}
+		<Video {video} />
+	{/each}
+</div>

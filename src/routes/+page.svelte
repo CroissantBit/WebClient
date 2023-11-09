@@ -1,4 +1,5 @@
 <script>
+	import { previousConnections } from '$lib/client/stores/previousConnections';
 	import ServerInput from '$lib/components/ServerInput.svelte';
 </script>
 
@@ -12,11 +13,17 @@
 		</p>
 	</div>
 
-	<div class="mt-10">	
-		<h2 class="text-lg text-bellflower-200">New Connection</h2>
+	<div class="mt-10">
+		<h2 class="mb-2 text-lg text-bellflower-200">New Connection</h2>
 		<p class="m-1 text-center text-xs text-slate-400">Enter server IP and Port</p>
 		<ServerInput />
-		<h2 class="mt-5 text-lg text-bellflower-200">Previous Connections</h2>
-		<ServerInput readonly={true} />
+		<h2 class="mb-2 mt-5 text-lg text-bellflower-200">Previous Connections</h2>
+		{#if $previousConnections.length === 0}
+			<p class="m-1 text-center text-xs text-slate-400">No previous connections</p>
+		{:else}
+			{#each $previousConnections as url}
+				<ServerInput {url} />
+			{/each}
+		{/if}
 	</div>
 </div>
