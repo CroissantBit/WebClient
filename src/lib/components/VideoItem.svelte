@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BarChart2, Play } from 'lucide-svelte';
+	import { BarChart2, Loader, Play } from 'lucide-svelte';
 	import type { VideoMetadata } from '$lib/types/metadata';
 
 	export let video: VideoMetadata;
@@ -14,16 +14,26 @@
 <div
 	class="flex max-w-md flex-row items-center gap-2 rounded bg-smore-900 p-1 hover:bg-lavender-900"
 >
-	<div
-		class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-smore-950 hover:bg-lapis-500"
-	>
-		<Play class="ml-1 h-5 w-5 fill-white text-white" />
-	</div>
+	{#if video.processing === false}
+		<button
+			class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-smore-950 hover:bg-lapis-500"
+		>
+			<Play class="ml-1 h-5 w-5 fill-white text-white" />
+		</button>
+	{:else}
+		<button class="flex h-8 w-8 items-center justify-center rounded-full bg-smore-950">
+			<Loader class="h-5 w-5 animate-spin fill-white text-white" />
+		</button>
+	{/if}
 	<div class="flex-1">
 		<h2 class="mb-1 text-bellflower-100">{video.title}</h2>
 		<div class="flex flex-row items-center gap-1 text-xs text-slate-500">
-			<BarChart2 class="h-3 w-3 " />
-			<span>{video.bpm} BPM</span>
+			{#if video.processing === true}
+				<span>Processing...</span>
+			{:else}
+				<BarChart2 class="h-3 w-3 " />
+				<span>{video.bpm} BPM</span>
+			{/if}
 		</div>
 	</div>
 	<span class="text-xs text-slate-500">

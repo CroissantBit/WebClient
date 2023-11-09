@@ -1,35 +1,28 @@
 import type { VideoMetadata } from '$lib/types/metadata';
 import { writable } from 'svelte/store';
 
-// Cretate a new store to hold the video metadata
-export const videos = writable<VideoMetadata[]>([]);
-// On first creation, fetch the video metadata from the server
-
-// TODO
-// Register update event
-
-/*
-function updateVideos(VideoMetadata: VideoMetadata[])
-{
-    VideoMetadata.forEach(item => {
-        // Replace each matching id with new item
-        // 
-    });
-}
-*/
+export const videos = createVideoStore();
 
 function createVideoStore() {
-	const { subscribe, set } = writable<VideoMetadata[]>([]);
+	const { subscribe, update } = writable<VideoMetadata[]>([]);
 
 	return {
 		subscribe,
 		/**
 		 * Updates existing and then appends leftover items to the store
-		 * @param videoMetadata
 		 */
-		appendVideos: async (videoMetadata: VideoMetadata[]) => {
-			videoMetadata.forEach((item) => {});
+		updateVideos: async (videoMetadata: VideoMetadata[]) => {
+			update((videos) => {
+				return videoMetadata.reduce((updatedVideos, item) => {
+					const index = updatedVideos.findIndex((video) => video.id === item.id);
+					if (index !== -1) {
+						updatedVideos[index] = item;
+					} else {
+						updatedVideos.push(item);
+					}
+					return updatedVideos;
+				}, videos);
+			});
 		}
-        // use derivede 
 	};
 }

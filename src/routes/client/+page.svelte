@@ -1,13 +1,17 @@
 <script lang="ts">
 	import Video from '$lib/components/VideoItem.svelte';
-	import { VideoMetadata } from '$lib/types/metadata';
-	import { Connection, registerClient } from '$lib/client/connection';
-	import { Ping } from '$lib/types/main';
+	import { videos } from '$lib/client/stores/videos';
+	import { Connection, ConnectionState } from '$lib/client/connection';
+	import { onMount } from 'svelte';
 
-	let video = VideoMetadata.create({ id: 1, title: 'Song Name', bpm: 100, duration: 582261 });
-	//registerClient();
-
-	let conn = new Connection('localhost', 8080);
+	onMount(() => {
+		let conn = new Connection('localhost', 8080);
+		if (conn.state !== ConnectionState.CONNECTING) {
+			return;
+		}
+	});
 </script>
 
-<Video {video} />
+{#each $videos as video (video.id)}
+	<Video {video} />
+{/each}
