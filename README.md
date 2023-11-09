@@ -8,7 +8,9 @@ Once you've created a project and installed dependencies with `npm install` (or 
 
 ```bash
 # Generate protbuf type definitions
-npm run gen
+# Use the command based on your enviroment
+npm run gen_win
+npm run gen_linux
 
 npm run dev
 
@@ -22,7 +24,10 @@ To create a production version of your app:
 
 ```bash
 # Generate protbuf type definitions
-npm run gen
+# Use the command based on your enviroment
+npm run gen_win
+npm run gen_linux
+
 npm run build
 ```
 
