@@ -1,7 +1,15 @@
 import { PUBLIC_KEEPALIVE_INTERVAL, PUBLIC_KEEPALIVE_TIMEOUT_RETRIES } from '$env/static/public';
-import { messageIdType,messageTypeId } from '$lib/client/messageId';
-import { Ping,Pong,RegisterClientRequest } from '$lib/types/main';
-import type { MessageType,UnknownMessage } from '$lib/types/typeRegistry';
+import { messageIdType, messageTypeId } from '$lib/client/messageId';
+import {
+	AudioFrame,
+	Ping,
+	Pong,
+	RegisterClientRequest,
+	RegisterClientResponse,
+	VideoFrameUpdate,
+	VideoMetadataResponse
+} from '$lib/types/main';
+import type { MessageType, UnknownMessage } from '$lib/types/typeRegistry';
 
 enum clientState {
 	DISCONNECTED = 'DISCONNECTED',
@@ -11,10 +19,12 @@ enum clientState {
 
 export class Connection {
 	public socket: WebSocket;
-	
+
 	private state: clientState = clientState.DISCONNECTED;
 	private keepAliveRetriesLeft = Number.parseInt(PUBLIC_KEEPALIVE_TIMEOUT_RETRIES);
 	private keepAliveIntervalId: any;
+
+	private id: number;
 
 	constructor(ip: string, port: number) {
 		this.socket = new WebSocket(`ws://${ip}:${port}`, 'binary');
@@ -40,7 +50,7 @@ export class Connection {
 		};
 
 		this.socket.onmessage = (event) => {
-			this.handleMessage(event, this.socket);
+			this.handleMessage(event);
 		};
 	}
 
@@ -56,8 +66,7 @@ export class Connection {
 
 	private registerKeepAlive() {
 		this.keepAliveIntervalId = setInterval(() => {
-			if (this.keepAliveRetriesLeft == 0)
-			{
+			if (this.keepAliveRetriesLeft == 0) {
 				this.socket.close();
 				console.log(this.socket);
 				return;
@@ -67,7 +76,7 @@ export class Connection {
 		}, Number.parseInt(PUBLIC_KEEPALIVE_INTERVAL));
 	}
 
-	private handleMessage(event: MessageEvent, socket: WebSocket) {
+	private handleMessage(event: MessageEvent) {
 		console.log('Message received');
 		let data = new Uint8Array(event.data);
 
@@ -75,16 +84,28 @@ export class Connection {
 		console.log('Message id', msgId, data[0]);
 		if (msgId === undefined) throw new Error(`Message id ${data[0]} not registered`);
 		let msgData = data.slice(1);
-		
+
 		switch (msgId.$type) {
 			case Ping.$type:
 				console.log('Ping received, sending Pong');
 				this.sendPrefixed(Pong.create(), Pong);
-			break;
+				break;
 			case Pong.$type:
 				this.keepAliveRetriesLeft = Number.parseInt(PUBLIC_KEEPALIVE_TIMEOUT_RETRIES);
 				console.log('Pong received');
-			break;
+				break;
+			case RegisterClientResponse.$type:
+				let clientData = RegisterClientResponse.decode(msgData);
+				this.id = clientData.clientId;
+				break;
+			case VideoFrameUpdate.$type:
+				break;
+			case AudioFrame.$type:
+				break;
+			case VideoMetadataResponse.$type:
+				let videoMetadataContainer = VideoMetadataResponse.decode(msgData);
+				videoMetadataContainer.videosMetadata.forEach((element) => {});
+				break;
 		}
 	}
 }

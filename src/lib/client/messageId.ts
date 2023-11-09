@@ -14,7 +14,7 @@ import {
 } from '$lib/types/main';
 import type { MessageType } from '$lib/types/typeRegistry';
 
-// Will need to be updated manually on each new proto-spec iteration 
+// Will need to be updated manually on each new proto-spec iteration
 // This is due to each message must be assigned a ID that matches the order in the .proto file
 export const orderedMessages = [
 	Ping,

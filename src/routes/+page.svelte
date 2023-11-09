@@ -12,7 +12,7 @@
 		</p>
 	</div>
 
-	<div class="mt-10">
+	<div class="mt-10">	
 		<h2 class="text-lg text-bellflower-200">New Connection</h2>
 		<p class="m-1 text-center text-xs text-slate-400">Enter server IP and Port</p>
 		<ServerInput />
