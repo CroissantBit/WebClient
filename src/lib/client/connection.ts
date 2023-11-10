@@ -68,17 +68,17 @@ export class Connection {
 	}
 
 	public sendPrefixed(msg: UnknownMessage, msgType: MessageType) {
-		let msgId = messageTypeId.get(msgType);
+		const msgId = messageTypeId.get(msgType);
 		if (msgId === undefined) throw new Error(`Message type ${msgType} not registered`);
 
-		let buffer = msgType.encode(msg).finish();
-		let prefixedBuffer = new Uint8Array([msgId, ...buffer]);
+		const buffer = msgType.encode(msg).finish();
+		const prefixedBuffer = new Uint8Array([msgId, ...buffer]);
 
 		this.socket.send(prefixedBuffer);
 	}
 
 	private registerClient() {
-		var clientRequest = RegisterClientRequest.create({
+		const clientRequest = RegisterClientRequest.create({
 			videoInfo: { resolution: { width: 300, height: 300, fps: 15 }, colorDepth: 16 },
 			audioInfo: { bitrate: 128, sampleRate: 20000, channels: 2 },
 			canControl: true
@@ -99,52 +99,58 @@ export class Connection {
 	}
 
 	private handleMessage(event: MessageEvent) {
-		let data = new Uint8Array(event.data);
+		const data = new Uint8Array(event.data);
 
-		let msgId = messageIdType.get(data[0]);
+		const msgId = messageIdType.get(data[0]);
 		if (msgId === undefined) throw new Error(`Message id ${data[0]} not registered`);
-		let msgData = data.slice(1);
+		const msgData = data.slice(1);
 
 		console.log('Received message', msgId, msgData);
 		switch (msgId.$type) {
-			case Ping.$type:
+			case Ping.$type: {
 				this.sendPrefixed(Pong.create(), Pong);
 				break;
+			}
 
-			case Pong.$type:
+			case Pong.$type: {
 				this.keepAliveRetriesLeft = Number.parseInt(PUBLIC_KEEPALIVE_TIMEOUT_RETRIES);
 				break;
+			}
 
-			case RegisterClientResponse.$type:
-				let clientData = RegisterClientResponse.decode(msgData);
+			case RegisterClientResponse.$type: {
+				const clientData = RegisterClientResponse.decode(msgData);
 				this.id = clientData.clientId;
 				console.log('Registered client with ID', this.id);
 				break;
+			}
 
-			case VideoFrameUpdate.$type:
+			case VideoFrameUpdate.$type: {
 				break;
+			}
 
-			case AudioFrameUpdate.$type:
+			case AudioFrameUpdate.$type: {
 				break;
+			}
 
-			case VideoMetadataResponse.$type:
-				let videoMetadataContainer = VideoMetadataResponse.decode(msgData);
+			case VideoMetadataResponse.$type: {
+				const videoMetadataContainer = VideoMetadataResponse.decode(msgData);
 				videos.updateVideos(videoMetadataContainer.videosMetadata);
 				break;
+			}
 
-			case SignalSequenceFrameUpdate.$type:
+			case SignalSequenceFrameUpdate.$type: {
 				break;
+			}
 
-			case SignalUpdateRequest.$type:
+			case SignalUpdateRequest.$type: {
 				break;
+			}
 
-			case SignalUpdateRequest.$type:
-				break;
-
-			case DeviceInfoResponse.$type:
-				let deviceInfoContainer = DeviceInfoResponse.decode(msgData);
+			case DeviceInfoResponse.$type: {
+				const deviceInfoContainer = DeviceInfoResponse.decode(msgData);
 				devices.updateDevices(deviceInfoContainer.devices);
 				break;
+			}
 		}
 	}
 }
