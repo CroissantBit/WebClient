@@ -33,8 +33,8 @@ export class Connection {
 	private keepAliveRetriesLeft = Number.parseInt(PUBLIC_KEEPALIVE_TIMEOUT_RETRIES);
 	private keepAliveIntervalId: ReturnType<typeof setInterval> | undefined;
 
-	constructor(ip: string, port: number) {
-		this.socket = new WebSocket(`ws://${ip}:${port}`, 'binary');
+	constructor(base: { ip: string; port: number }) {
+		this.socket = new WebSocket(`ws://${base.ip}:${base.port}`, 'binary');
 		this.socket.binaryType = 'arraybuffer';
 
 		this.state = ConnectionState.CONNECTING;
@@ -46,7 +46,7 @@ export class Connection {
 
 		this.socket.onopen = async () => {
 			this.state = ConnectionState.CONNECTED;
-			console.log(`Connected to WebSocket server ${ip}:${port}`);
+			console.log(`Connected to WebSocket server ${base.ip}:${base.port}`);
 
 			this.registerClient();
 			this.registerKeepAlive();
