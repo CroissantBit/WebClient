@@ -1,0 +1,46 @@
+name: Deploy project to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v2
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build site
+        run: |
+          pnpm run gen_linux
+          pnpm run build
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 6bdefc9266c0117d0b4caf8492a816ee
+          projectName: croissantbit
+          directory: build
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
