@@ -1,8 +1,69 @@
-<script>
+<script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { ArrowLeft, Github } from 'lucide-svelte';
+	import { ToastType, addToast } from '$lib/components/Toaster.svelte';
+	import { ArrowLeft, Github, Loader } from 'lucide-svelte';
+	import type { LayoutData } from './$types';
+	import { onMount } from 'svelte';
+	import { getPreviousUrl, getPreviousUrlWithParams } from '$lib/util';
 
-	$: previousPage = new URL($page.url.toString().split('/').slice(0, -1).join('/'));
+	export let data: LayoutData;
+	if (data.currentConnection === undefined) {
+		addToast({
+			data: {
+				type: ToastType.Warning,
+				title: 'Not connected',
+				description: 'Auto connect from URL failed. Please enter server IP and Port manually.'
+			}
+		});
+		goto('/');
+	}
+
+	let socket: WebSocket | undefined;
+	$: if (data.currentConnection) ({ socket } = data.currentConnection);
+	$: state = socket?.readyState;
+	$: previousPage =
+		$page.url.pathname === '/client'
+			? getPreviousUrl($page.url)
+			: getPreviousUrlWithParams($page.url);
+
+	onMount(() => {
+		if (socket === undefined) return;
+		addToast({
+			data: {
+				title: 'Connecting',
+				description: `Connecting to WebSocket server ${socket?.url}`,
+				type: ToastType.Info
+			}
+		});
+
+		socket.addEventListener('open', () => {
+			addToast({
+				data: {
+					title: 'Connected',
+					description: `Connected to WebSocket server ${socket?.url}`,
+					type: ToastType.Success
+				}
+			});
+			// Needed due to Svelte not updating state
+			state = socket?.readyState;
+		});
+
+		socket.addEventListener('close', () => {
+			addToast({
+				data: {
+					title: 'Disconnected',
+					description: `Disconnected from WebSocket server ${socket?.url}`,
+					type: ToastType.Error
+				}
+			});
+			state = socket?.readyState;
+		});
+
+		return () => {
+			socket?.close();
+		};
+	});
 </script>
 
 <nav class="mb-2 flex flex-row items-center justify-start gap-2">
@@ -15,4 +76,18 @@
 	</a>
 </nav>
 
-<slot />
+{#if state === WebSocket.OPEN}
+	<slot />
+{:else if state === WebSocket.CONNECTING}
+	<div class="grid h-full w-full place-items-center text-white">
+		<span class="flex flex-row items-center justify-center gap-4 rounded bg-smore-900 p-4 text-xl">
+			<Loader class="h-8 w-8 animate-spin fill-white" />Connecting...
+		</span>
+	</div>
+{:else}
+	<div class="grid h-full w-full place-items-center text-white">
+		<span class="flex flex-row items-center justify-center gap-4 rounded bg-smore-900 p-4 text-xl">
+			<Loader class="h-8 w-8 text-red-500" />Disconnected
+		</span>
+	</div>
+{/if}

@@ -4,9 +4,10 @@
 	import { videos } from '$lib/client/stores/videosList';
 	import { Airplay, Grid2X2, List, Search } from 'lucide-svelte';
 	import { createToggle, melt } from '@melt-ui/svelte';
+	import { appendSearchParams } from '$lib/util';
+	import { page } from '$app/stores';
 
 	let searchTerm = '';
-
 	$: filteredVideos = $videos.filter((video) =>
 		video.title.toLowerCase().includes(searchTerm.toLowerCase())
 	);
@@ -39,7 +40,7 @@
 	</button>
 	<UploadDialog />
 	<a
-		href="/client/devices"
+		href="client/devices"
 		class="flex items-center rounded p-2 outline-none hover:bg-lavender-900 hover:text-bellflower-100 focus:bg-lavender-900 focus:text-bellflower-100"
 	>
 		<Airplay class="h-6 w-6" />

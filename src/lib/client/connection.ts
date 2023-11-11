@@ -17,17 +17,10 @@ import {
 } from '$lib/types/main';
 import type { MessageType, UnknownMessage } from '$lib/types/typeRegistry';
 import { devices } from './stores/devicesList';
-
-export enum ConnectionState {
-	DISCONNECTED = 'DISCONNECTED',
-	CONNECTING = 'CONNECTING',
-	CONNECTED = 'CONNECTED'
-}
+import { previousConnections } from './stores/previousConnections';
 
 export class Connection {
-	private socket: WebSocket;
-
-	public state: ConnectionState = ConnectionState.DISCONNECTED;
+	public socket: WebSocket;
 	public id: number = -1;
 
 	private keepAliveRetriesLeft = Number.parseInt(PUBLIC_KEEPALIVE_TIMEOUT_RETRIES);
@@ -37,34 +30,39 @@ export class Connection {
 		this.socket = new WebSocket(`ws://${base.ip}:${base.port}`, 'binary');
 		this.socket.binaryType = 'arraybuffer';
 
-		this.state = ConnectionState.CONNECTING;
-
-		this.socket.onerror = async (event) => {
+		this.socket.addEventListener('error', (event) => {
 			console.warn('Connection error', event);
-			if (this.state == ConnectionState.CONNECTING) this.state = ConnectionState.DISCONNECTED;
-		};
+		});
 
-		this.socket.onopen = async () => {
-			this.state = ConnectionState.CONNECTED;
+		this.socket.addEventListener('open', async () => {
 			console.log(`Connected to WebSocket server ${base.ip}:${base.port}`);
+
+			// Append to previous connections list
+			previousConnections.update((arr) => {
+				const index = arr.indexOf(`${base.ip}:${base.port}`);
+				if (index != -1) arr.splice(index, 1);
+				arr.push(`${base.ip}:${base.port}`);
+				return arr.slice(-5);
+			});
 
 			this.registerClient();
 			this.registerKeepAlive();
 
 			this.sendPrefixed(VideoMetadataListRequest.create(), VideoMetadataListRequest);
 			this.sendPrefixed(DeviceInfoListRequest.create(), DeviceInfoListRequest);
-		};
+		});
 
-		this.socket.onclose = async () => {
-			this.state = ConnectionState.DISCONNECTED;
+		this.socket.addEventListener('close', async () => {
 			console.log('Connection closed');
 
 			clearInterval(this.keepAliveIntervalId);
-		};
+			videos.set([]);
+			devices.set([]);
+		});
 
-		this.socket.onmessage = async (event) => {
+		this.socket.addEventListener('message', async (event) => {
 			this.handleMessage(event);
-		};
+		});
 	}
 
 	public sendPrefixed(msg: UnknownMessage, msgType: MessageType) {

@@ -4,10 +4,11 @@ import { writable } from 'svelte/store';
 export const devices = createDevicesStore();
 
 function createDevicesStore() {
-	const { subscribe, update } = writable<DeviceInfo[]>([]);
+	const { subscribe, update, set } = writable<DeviceInfo[]>([]);
 
 	return {
 		subscribe,
+		set,
 		/**
 		 * Updates existing and appends leftover items to the store
 		 */

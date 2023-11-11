@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
 	export enum ToastType {
-		Success = 'border-green-900',
-		Error = 'border-red-900',
-		Warning = 'border-yellow-900',
-		Info = 'border-blue-900'
+		Success = 'border-green-500',
+		Error = 'border-red-500',
+		Warning = 'border-orange-500',
+		Info = 'border-blue-500'
 	}
 
 	export type ToastData = {
@@ -20,6 +20,8 @@
 	} = createToaster<ToastData>();
 
 	export const addToast = helpers.addToast;
+	export const updateToast = helpers.updateToast;
+	export const removeToast = helpers.removeToast;
 </script>
 
 <script lang="ts">
@@ -36,7 +38,7 @@
 			animate:flip={{ duration: 500 }}
 			in:fly={{ duration: 150, x: '100%' }}
 			out:fly={{ duration: 150, x: '100%' }}
-			class="relative rounded border-l-2 bg-smore-900 p-2 text-white {data.type}"
+			class="relative max-w-xs rounded border-l-4 bg-smore-900 p-2 text-white {data.type}"
 		>
 			<div class="mr-2 p-2">
 				<h3 use:melt={$title(id)} class="text-sm font-bold">

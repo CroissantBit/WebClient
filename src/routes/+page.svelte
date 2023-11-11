@@ -1,6 +1,19 @@
-<script>
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { currentConnection } from '$lib/client/stores/currentConnection';
 	import { previousConnections } from '$lib/client/stores/previousConnections';
 	import ServerInput from '$lib/components/ServerInput.svelte';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		if ($currentConnection !== null) return;
+		const serverIp = $page.url.searchParams.get('ip');
+		const serverPort = $page.url.searchParams.get('port');
+		if (serverIp === null || serverPort === null) return;
+
+		goto(`/client?ip=${serverIp}&port=${serverPort}`);
+	});
 </script>
 
 <div class="flex h-full w-full flex-col items-center justify-center gap-12">
@@ -21,9 +34,11 @@
 		{#if $previousConnections.length === 0}
 			<p class="m-1 text-center text-xs text-slate-400">No previous connections</p>
 		{:else}
-			{#each $previousConnections as url}
-				<ServerInput {url} />
-			{/each}
+			<div class="flex flex-col gap-2">
+				{#each $previousConnections as url}
+					<ServerInput server={url} />
+				{/each}
+			</div>
 		{/if}
 	</div>
 </div>

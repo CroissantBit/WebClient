@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Connection } from '$lib/client/connection';
+	import { goto } from '$app/navigation';
 	import { currentConnection } from '$lib/client/stores/currentConnection';
 	import { ArrowRight } from 'lucide-svelte';
 
@@ -9,9 +9,10 @@
 	function connect() {
 		if (server === '' || !server.includes(':')) return (inputFailedValidation = true);
 		let parts = server.split(':');
-		if (parts.length === 0) return (inputFailedValidation = true);
+		if (parts.length === 0 || Number.isInteger(Number(parts[1])) === false)
+			return (inputFailedValidation = true);
 
-		$currentConnection = new Connection({ ip: parts[0], port: Number.parseInt(parts[1]) });
+		goto(`/client?ip=${parts[0]}&port=${parts[1]}`);
 	}
 </script>
 

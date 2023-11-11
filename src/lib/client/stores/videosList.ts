@@ -4,10 +4,11 @@ import { writable } from 'svelte/store';
 export const videos = createVideosStore();
 
 function createVideosStore() {
-	const { subscribe, update } = writable<VideoMetadata[]>([]);
+	const { subscribe, update, set } = writable<VideoMetadata[]>([]);
 
 	return {
 		subscribe,
+		set,
 		/**
 		 * Updates existing and appends leftover items to the store
 		 */

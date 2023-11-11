@@ -33,7 +33,7 @@
 			<h2 use:melt={$title} class="mx-auto text-center text-2xl text-white">Upload</h2>
 			<button
 				use:melt={$close}
-				class="absolute right-4 top-4 rounded p-1 text-bellflower-100 hover:bg-lavender-900"
+				class="absolute right-4 top-4 rounded p-1 text-bellflower-100 hover:bg-lavender-900 hover:text-red-500"
 			>
 				<X class="h-5 w-5" />
 			</button>
