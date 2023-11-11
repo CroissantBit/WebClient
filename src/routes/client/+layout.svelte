@@ -5,7 +5,7 @@
 	import { ArrowLeft, Github, Loader } from 'lucide-svelte';
 	import type { LayoutData } from './$types';
 	import { onMount } from 'svelte';
-	import { getPreviousUrl, getPreviousUrlWithParams } from '$lib/util';
+	import { getPreviousUrl } from '$lib/util';
 
 	export let data: LayoutData;
 	if (data.currentConnection === undefined) {
@@ -22,10 +22,7 @@
 	let socket: WebSocket | undefined;
 	$: if (data.currentConnection) ({ socket } = data.currentConnection);
 	$: state = socket?.readyState;
-	$: previousPage =
-		$page.url.pathname === '/client'
-			? getPreviousUrl($page.url)
-			: getPreviousUrlWithParams($page.url);
+	$: previousPage = getPreviousUrl($page.url);
 
 	onMount(() => {
 		if (socket === undefined) return;

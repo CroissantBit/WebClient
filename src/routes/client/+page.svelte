@@ -4,8 +4,6 @@
 	import { videos } from '$lib/client/stores/videosList';
 	import { Airplay, Grid2X2, List, Search } from 'lucide-svelte';
 	import { createToggle, melt } from '@melt-ui/svelte';
-	import { appendSearchParams } from '$lib/util';
-	import { page } from '$app/stores';
 
 	let searchTerm = '';
 	$: filteredVideos = $videos.filter((video) =>

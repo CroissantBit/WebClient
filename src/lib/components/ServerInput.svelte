@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { currentConnection } from '$lib/client/stores/currentConnection';
 	import { ArrowRight } from 'lucide-svelte';
 
 	export let server: string = '';

@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { currentConnection } from '$lib/client/stores/currentConnection';
 	import { previousConnections } from '$lib/client/stores/previousConnections';
 	import ServerInput from '$lib/components/ServerInput.svelte';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		if ($currentConnection !== null) return;
 		const serverIp = $page.url.searchParams.get('ip');
 		const serverPort = $page.url.searchParams.get('port');
 		if (serverIp === null || serverPort === null) return;
