@@ -4,10 +4,9 @@
 	import { ArrowRight } from 'lucide-svelte';
 
 	export let url: string = '';
-	let inputFailedValidation = false;
 
 	function navigate() {
-		if (url === '' || !url.includes(':')) return (inputFailedValidation = true);
+		if (url === '' || !url.includes(':')) return;
 		let finalUrl = new URL($page.url + 'client');
 		finalUrl.searchParams.set('server', url);
 		goto(finalUrl);
@@ -17,9 +16,8 @@
 <div id="server-input" class="flex gap-2">
 	<input
 		bind:value={url}
-		data-failed-validation={inputFailedValidation}
 		type="text"
-		class="flex-1 rounded border bg-smore-900 p-2 text-white data-[failed-validation=true]:border-red-500"
+		class="flex-1 rounded bg-smore-900 p-2 text-white"
 		placeholder="localhost:443"
 	/>
 	<button
