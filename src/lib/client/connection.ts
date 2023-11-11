@@ -1,5 +1,8 @@
 import { PUBLIC_KEEPALIVE_INTERVAL, PUBLIC_KEEPALIVE_TIMEOUT_RETRIES } from '$env/static/public';
 import { messageIdType, messageTypeId } from '$lib/client/messageId';
+import { connectionState } from '$lib/client/stores/connectionState';
+import { devices } from '$lib/client/stores/devicesList';
+import { previousConnections } from '$lib/client/stores/previousConnections';
 import { videos } from '$lib/client/stores/videosList';
 import {
 	AudioFrameUpdate,
@@ -16,8 +19,6 @@ import {
 	VideoMetadataResponse
 } from '$lib/types/main';
 import type { MessageType, UnknownMessage } from '$lib/types/typeRegistry';
-import { devices } from './stores/devicesList';
-import { previousConnections } from './stores/previousConnections';
 
 export class Connection {
 	public socket: WebSocket;
@@ -35,6 +36,7 @@ export class Connection {
 		});
 
 		this.socket.addEventListener('open', async () => {
+			connectionState.set(WebSocket.OPEN);
 			console.log(`Connected to WebSocket server ${base.ip}:${base.port}`);
 
 			// Append to previous connections list
@@ -53,6 +55,7 @@ export class Connection {
 		});
 
 		this.socket.addEventListener('close', async () => {
+			connectionState.set(WebSocket.CLOSED);
 			console.log('Connection closed');
 
 			clearInterval(this.keepAliveIntervalId);
