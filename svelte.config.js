@@ -9,7 +9,8 @@ const config = {
 	kit: {
 		adapter: adapter({
 			// Cloudflare Pages uses 404.html for error pages
-			fallback: '404.html'
+			fallback: '404.html',
+			pages: 'build'
 		})
 	}
 };
