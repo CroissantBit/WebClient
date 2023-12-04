@@ -9,6 +9,8 @@ import {
 	DeviceInfoListRequest,
 	DeviceInfoResponse,
 	Ping,
+	PlayerRequestResponse,
+	PlayerStateUpdate,
 	Pong,
 	RegisterClientRequest,
 	RegisterClientResponse,
@@ -18,11 +20,15 @@ import {
 	VideoMetadataListRequest,
 	VideoMetadataResponse
 } from '$lib/types/main';
+import type { VideoMetadata } from '$lib/types/metadata';
+import { PlayerState } from '$lib/types/player';
 import type { MessageType, UnknownMessage } from '$lib/types/typeRegistry';
 
 export class Connection {
 	public socket: WebSocket;
 	public id: number = -1;
+	public playerState: PlayerState = PlayerState.IDLE;
+	public playerVideo: VideoMetadata | undefined;
 
 	private keepAliveRetriesLeft = Number.parseInt(PUBLIC_KEEPALIVE_TIMEOUT_RETRIES);
 	private keepAliveIntervalId: ReturnType<typeof setInterval> | undefined;
@@ -58,7 +64,7 @@ export class Connection {
 			connectionState.set(WebSocket.CLOSED);
 			console.log('Connection closed');
 
-			clearInterval(this.keepAliveIntervalId);
+			if (this.keepAliveIntervalId != undefined) clearInterval(this.keepAliveIntervalId);
 			videos.set([]);
 			devices.set([]);
 		});
@@ -150,6 +156,23 @@ export class Connection {
 			case DeviceInfoResponse.$type: {
 				const deviceInfoContainer = DeviceInfoResponse.decode(msgData);
 				devices.updateDevices(deviceInfoContainer.devices);
+				break;
+			}
+
+			case PlayerRequestResponse.$type: {
+				break;
+			}
+
+			case PlayerStateUpdate.$type: {
+				const playerStateUpdate = PlayerStateUpdate.decode(msgData);
+				if (
+					playerStateUpdate.state == PlayerState.UNRECOGNIZED ||
+					playerStateUpdate.videoMetadata == undefined
+				)
+					throw new Error('Received invalid player state update');
+
+				this.playerState = playerStateUpdate.state;
+				this.playerVideo = playerStateUpdate.videoMetadata;
 				break;
 			}
 		}

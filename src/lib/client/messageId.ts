@@ -13,7 +13,11 @@ import {
 	VideoFrameUpdate,
 	VideoMetadataListRequest,
 	VideoMetadataRequest,
-	VideoMetadataResponse
+	VideoMetadataResponse,
+	PlayerPlayRequest,
+	PlayerStopRequest,
+	PlayerRequestResponse,
+	PlayerStateUpdate
 } from '$lib/types/main';
 import type { MessageType } from '$lib/types/typeRegistry';
 
@@ -37,7 +41,11 @@ export const orderedMessages = [
 	SignalUpdateResponse,
 	DeviceInfoRequest,
 	DeviceInfoListRequest,
-	DeviceInfoResponse
+	DeviceInfoResponse,
+	PlayerPlayRequest,
+	PlayerStopRequest,
+	PlayerRequestResponse,
+	PlayerStateUpdate
 ];
 
 export const messageTypeId = new Map<MessageType, number>(
