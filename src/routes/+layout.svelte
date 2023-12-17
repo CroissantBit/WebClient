@@ -1,12 +1,12 @@
 <script lang="ts">
 	import '../app.css';
 	import Toaster from '$lib/components/Toaster.svelte';
-	import { connectionState } from '$lib/client/stores/connectionState';
+	
 </script>
 
 <svelte:head>
 	<title>
-		CroissantBit - {$connectionState === WebSocket.OPEN ? 'Connected' : 'Disconnected'}
+		CroissantBit 
 	</title>
 </svelte:head>
 

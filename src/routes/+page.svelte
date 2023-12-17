@@ -1,42 +1,48 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { previousConnections } from '$lib/client/stores/previousConnections';
-	import ServerInput from '$lib/components/ServerInput.svelte';
+
 	import { onMount } from 'svelte';
+	import axios from "axios";
 
-	onMount(() => {
-		const serverIp = $page.url.searchParams.get('ip');
-		const serverPort = $page.url.searchParams.get('port');
-		if (serverIp === null || serverPort === null) return;
+	onMount(async () => {
+		try {
+			const response = await axios.get("https://localhost:7178/")
+			if (response.status == 200)
+			{
+				console.log("could connect")
+				goto(`/client`);
+			}
+			console.log("coulnt connect")
+		}	
+		catch (e) {
+			console.log(e)	
+		}
 
-		goto(`/client?ip=${serverIp}&port=${serverPort}`);
+		
 	});
+
+	function handleReload() {
+		window.location.reload(); // Passing true as an argument forces a reload from the server, skipping the cache
+	}
 </script>
 
 <div class="flex h-full w-full flex-col items-center justify-center gap-12">
-	<div class="justify-start">
+	<div class="justify-start flex flex-col items-center gap-y-4">
 		<h1 class="text-center text-4xl font-bold text-bellflower-100">Croissant Bit</h1>
 		<p class="text-body font-medium text-slate-400">
+			<span class="text-red-600 text-center">Connection failed. </span>
+			<br>
+			Make sure to start the server on the port 7178.
+			<br>
 			Visit <a href="https://github.com/CroissantBit" class="text-bellflower-500">
 				github.com/CroissantBit
 			</a> for more info
 		</p>
+		<button on:click={handleReload}  class="bg-gray-600 rounded-full w-48 h-8 text-white font-semibold">
+		Try again
+		</button>
 	</div>
 
-	<div>
-		<h2 class="mb-2 text-lg text-bellflower-200">New Connection</h2>
-		<p class="m-1 text-center text-xs text-slate-400">Enter server IP and Port</p>
-		<ServerInput />
-		<h2 class="mb-2 mt-5 text-lg text-bellflower-200">Previous Connections</h2>
-		{#if $previousConnections.length === 0}
-			<p class="m-1 text-center text-xs text-slate-400">No previous connections</p>
-		{:else}
-			<div class="flex flex-col gap-2">
-				{#each $previousConnections as url}
-					<ServerInput server={url} />
-				{/each}
-			</div>
-		{/if}
-	</div>
+	
+	
 </div>
